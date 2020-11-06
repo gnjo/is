@@ -210,6 +210,78 @@
         return value != null && typeof value === 'object' && 'setInterval' in value;
     };
 
+    
+    
+    
+    //migration
+    /******************************************/
+is.dark=function(d){
+ //https://www.w3.org/TR/AERT/#color-contrast 
+ let c=d,f=(c)=>{return ((c[0] * 299 + c[1] * 587 + c[2] * 114) / 1000)}
+ if(c.charAt(5)=='') return; 
+ c=c.replace('#','').match(/.{2}/g).map(d=>parseInt(d,16))
+ return (f(c)<128)
+}
+/**/
+//nihongo
+//include one is true
+is.sijigo=function(d){
+let data=`これ,ここ,こっち,こちら,こいつ,こなた,この,こう,こんな
+それ,そこ,そっち,そちら,そいつ,そなた,その,そう,そんな
+あれ,あそこ,あっち,あちら,あいつ,あなた,あの,ああ,あんな
+どれ,どこ,どっち,どちら,どいつ,どなた,どの,どう,どんな`
+let re=new RegExp(data.trim().split(/,|\n/).join('|'))
+ return re.test(d)
+}
+is.katakana=function(d){return /[\u30a0-\u30ff]/.test(d)}
+is.hiragana=function(d){return /[\u3040-\u309f]/.test(d)}
+is.kanji=function(d){return /[\u3005-\u3006\u30e0-\u9fcf]/.test(d)}
+is.kannji=is.kanji;
+is.nihongo=function(d){return (is.katakana(d)|is.hiragana(d)|is.kanji(d))}
+//hard check
+is.sijigoOnly=function(d){
+let data=`これ,ここ,こっち,こちら,こいつ,こなた,この,こう,こんな
+それ,そこ,そっち,そちら,そいつ,そなた,その,そう,そんな
+あれ,あそこ,あっち,あちら,あいつ,あなた,あの,ああ,あんな
+どれ,どこ,どっち,どちら,どいつ,どなた,どの,どう,どんな`
+let re=new RegExp(data.trim().split(/,|\n/).map(d=>'^'+d).join('|'))
+ return re.test(d)
+}
+is.katakanaOnly=function(d){return /^[\u30a0-\u30ff]+$/.test(d)}
+is.hiraganaOnly=function(d){return /^[\u3040-\u309f]+$/.test(d)}
+is.kanjiOnly=function(d){return /^[\u3005-\u3006\u30e0-\u9fcf]+$/.test(d)}
+is.kannjiOnly=is.kanjiOnly;
+is.nihongoOnly=function(d){return (is.katakanaOnly(d)|is.hiraganaOnly(d)|is.kanjiOnly(d))?true:false}
+
+is.numberable=function(str,flg){
+ // aaa>false, 14>true, 14.444>true, -14.444>true, ofcause 0 is true.
+ //flg null is near check. ex) 14px is true
+ //flg is is hard check. ex) 14px is false
+ if(!flg)return !is.nan(parseFloat(str))
+ if(flg)return /^[0-9\-\.]+$/.test(str) //null is false
+}
+
+is.promise=function isPromise(obj) {
+  return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
+}
+is.Promise=is.promise
+    
+    /******************************************/
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     // Presence checks
     /* -------------------------------------------------------------------------- */
 
